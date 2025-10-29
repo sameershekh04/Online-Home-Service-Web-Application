@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - SpitiCare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5d3b66;
+            --primary-light: #8e44ad;
+            --secondary: #ff6b6b;
+            --accent: #ff9f43;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --success: #10ac84;
+            --warning: #ee5a24;
+            --info: #0abde3;
+            --text: #333;
+            --text-light: #666;
+            --bg-light: #ffffff;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background: #fff;
+            color: #000;
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        .logo i {
+            margin-right: 10px;
+            color: #ff6600;
+            font-size: 2.2rem;
+        }
+        .welcome-section {
+            padding: 80px 20px;
+            text-align: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3') center/cover;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .welcome-section h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .welcome-section p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .content-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            margin: 0 auto 40px;
+            max-width: 800px;
+            text-align: center;
+        }
+        .content-card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        .content-card p {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: var(--transition);
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .feature {
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+        .feature i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        .feature h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        .footer {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: var(--white);
+            padding: 70px 0 30px;
+            text-align: center;
+        }
+        .footer p {
+            margin-bottom: 20px;
+        }
+        .footer a {
+            color: var(--secondary);
+            text-decoration: none;
+        }
+        @media (max-width: 768px) {
+            .welcome-section h1 {
+                font-size: 2.2rem;
+            }
+            .content-card {
+                padding: 30px 20px;
+            }
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                SpitiCare
+            </div>
+            <nav>
+                <ul style="display: flex; list-style: none;">
+                    <li style="margin-left: 20px;"><a href="serviceproviderhome.html" style="color: #000; text-decoration: none;">Home</a></li>
+                    <li style="margin-left: 20px;"><a href="services.php" style="color: #000; text-decoration: none;">Services</a></li>
+                    <li style="margin-left: 20px;"><a href="provider_login.php" style="color: #000; text-decoration: none;">Provider Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+        <div class="container">
+            <h1>Welcome to SpitiCare!</h1>
+            <p>Thank you for registering as a service provider. Your account is now pending verification.</p>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="container">
+        <div class="content-card">
+            <h2>What Happens Next?</h2>
+            <p>Our team will review your application and verify your documents. This process typically takes 24-48 hours.</p>
+            <p>Once your account is verified, you'll receive a confirmation email and can start receiving service requests from customers in your area.</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-user-check"></i>
+                    <h3>Account Verification</h3>
+                    <p>We'll verify your identity and credentials to ensure trust and safety.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-bell"></i>
+                    <h3>Notification</h3>
+                    <p>You'll receive an email once your account is approved and ready to use.</p>
+                </div>
+                
+            </div>
+            
+            <div style="margin-top: 40px;">
+                <a href="serviceproviderhome.html" class="btn">Back to Home</a>
+                <a href="provider_login.php" class="btn btn-outline">Provider Login</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SpitiCare. All rights reserved.</p>
+            <p>Need help? Contact us at <a href="mailto:support@spiticare.com">support@spiticare.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

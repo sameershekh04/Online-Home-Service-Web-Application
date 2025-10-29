@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center px-4 py-10">
+
+  <div class="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-8 space-y-8">
+    <h2 class="text-3xl font-bold text-gray-800 text-center">Choose Your Payment Method</h2>
+
+    <!-- Payment Options -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="payment-options">
+      <button class="payment-option border border-gray-300 rounded-lg p-4 hover:border-blue-500 transition" data-type="upi">
+        <h3 class="text-lg font-semibold">UPI</h3>
+        <p class="text-sm text-gray-600">Pay using your UPI ID</p>
+      </button>
+
+      <button class="payment-option border border-gray-300 rounded-lg p-4 hover:border-blue-500 transition" data-type="card">
+        <h3 class="text-lg font-semibold">Credit / Debit Card</h3>
+        <p class="text-sm text-gray-600">Pay securely using card</p>
+      </button>
+
+      <button class="payment-option border border-gray-300 rounded-lg p-4 hover:border-blue-500 transition" data-type="netbanking">
+        <h3 class="text-lg font-semibold">Net Banking</h3>
+        <p class="text-sm text-gray-600">Choose your bank</p>
+      </button>
+
+      <button class="payment-option border border-gray-300 rounded-lg p-4 hover:border-blue-500 transition" data-type="qrcode">
+        <h3 class="text-lg font-semibold">QR Code</h3>
+        <p class="text-sm text-gray-600">Scan to pay</p>
+      </button>
+
+      <button class="payment-option border border-gray-300 rounded-lg p-4 hover:border-blue-500 transition col-span-full" data-type="cash">
+        <h3 class="text-lg font-semibold">Pay After Service</h3>
+        <p class="text-sm text-gray-600">Cash or other options after service</p>
+      </button>
+    </div>
+
+    <!-- Payment Summary -->
+    <div id="payment-summary" class="bg-gray-50 p-5 rounded-lg border border-gray-200 shadow-sm hidden">
+      <h3 class="text-lg font-semibold mb-3">Payment Summary</h3>
+      <div class="flex justify-between text-gray-700 mb-1">
+        <span>Service Charge</span>
+        <span>₹<span id="summary-service">0</span></span>
+      </div>
+      <div class="flex justify-between text-gray-700 mb-1">
+        <span>Tax (18%)</span>
+        <span>₹<span id="summary-tax">0</span></span>
+      </div>
+      <div class="flex justify-between text-gray-700 mb-1">
+        <span>Platform Fee</span>
+        <span>₹<span id="summary-platform">69</span></span>
+      </div>
+      <hr class="my-3">
+      <div class="flex justify-between text-lg font-bold text-gray-900">
+        <span>Total Payable</span>
+        <span>₹<span id="summary-total">0</span></span>
+      </div>
+    </div>
+
+    <!-- Payment Form Area -->
+    <div id="payment-details" class="mt-4 border-t pt-6 hidden"></div>
+
+    <div class="text-center">
+      <button id="confirmPayment" class="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-lg font-semibold hidden">
+        Confirm & Pay
+      </button>
+    </div>
+  </div>
+
+  <!-- Hidden fallback totals (if you still use them elsewhere) -->
+  <div class="hidden">
+    <span id="item-total">500</span>
+    <span id="tax">90</span>
+  </div>
+
+  <script>
+    // Elements
+    const paymentOptions = document.querySelectorAll(".payment-option");
+    const paymentDetails = document.getElementById("payment-details");
+    const paymentSummary = document.getElementById("payment-summary");
+    const confirmBtn = document.getElementById("confirmPayment");
+
+    // Helper: compute item total from localStorage cart or fallback DOM
+    function getItemTotalFromCart() {
+      try {
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        if (Array.isArray(cart) && cart.length > 0) {
+          return cart.reduce((sum, it) => {
+            const price = Number(it.price) || 0;
+            const qty = Number(it.qty) || 1;
+            return sum + price * qty;
+          }, 0);
+        }
+      } catch (e) {
+        console.warn("cart parse error", e);
+      }
+      // fallback to hidden DOM span
+      return parseFloat(document.getElementById("item-total")?.textContent || "0") || 0;
+    }
+
+    // Update payment summary UI
+    function updatePaymentSummary() {
+      const itemTotal = getItemTotalFromCart();
+      const tax = Math.round(itemTotal * 0.18);
+      const platformFee = 69;
+      const totalAmount = itemTotal + tax + platformFee;
+
+      document.getElementById("summary-service").textContent = itemTotal.toFixed(2);
+      document.getElementById("summary-tax").textContent = tax.toFixed(2);
+      document.getElementById("summary-platform").textContent = platformFee.toFixed(2);
+      document.getElementById("summary-total").textContent = totalAmount.toFixed(2);
+
+      // show summary
+      paymentSummary.classList.remove("hidden");
+      return totalAmount;
+    }
+
+    // Generate QR image using qrserver (amount embedded)
+    function generateUPIQR() {
+      // ensure summary is up-to-date
+      const totalAmount = updatePaymentSummary();
+      const upiID = "9340988525-3@axl"; // your UPI id
+      const payeeName = "SpitiCare";
+      const note = "Service Payment";
+
+      const upiLink = `upi://pay?pa=${encodeURIComponent(upiID)}&pn=${encodeURIComponent(payeeName)}&am=${totalAmount.toFixed(2)}&cu=INR&tn=${encodeURIComponent(note)}`;
+      const qrImageURL = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+
+      const qrImgEl = document.getElementById("upiQR");
+      if (qrImgEl) {
+        qrImgEl.src = qrImageURL;
+      } else {
+        console.warn("upiQR element not present");
+      }
+    }
+
+    // Wire up payment option buttons
+    paymentOptions.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const type = btn.dataset.type;
+
+        // reveal controls
+        confirmBtn.classList.remove("hidden");
+        paymentDetails.classList.remove("hidden");
+        paymentSummary.classList.remove("hidden");
+
+        // visual selection
+        paymentOptions.forEach(el => el.classList.remove("border-blue-500", "ring-2", "ring-blue-200"));
+        btn.classList.add("border-blue-500", "ring-2", "ring-blue-200");
+
+        // Update summary from cart/fallback
+        updatePaymentSummary();
+
+        // render method UI (use backticks for multiline)
+        switch (type) {
+          case "upi":
+            paymentDetails.innerHTML = `
+              <label class="block mb-2 text-sm font-medium text-gray-700">Enter UPI ID (or use default)</label>
+              <input id="customUpi" type="text" placeholder="example@upi" value="" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <div class="mt-4">
+                <p class="mb-2 text-sm text-gray-700">Or scan QR</p>
+                <img id="upiQR" src="" alt="QR Code" style="width: 180px; height: 180px;" class="mx-auto rounded-lg shadow" />
+              </div>
+            `;
+            // prefill QR with default UPI id; if user types custom UPI, regenerate on blur
+            generateUPIQR(); // uses default UPI id
+            // add listener to custom UPI input to regenerate QR when changed
+            setTimeout(() => {
+              const inp = document.getElementById("customUpi");
+              if (inp) {
+                inp.addEventListener("blur", () => {
+                  const custom = inp.value.trim();
+                  // if user provided custom UPI, generate QR with that
+                  if (custom) {
+                    const totalAmount = parseFloat(document.getElementById("summary-total").textContent) || updatePaymentSummary();
+                    const upiLink = `upi://pay?pa=${encodeURIComponent(custom)}&pn=${encodeURIComponent("SpitiCare")}&am=${totalAmount.toFixed(2)}&cu=INR&tn=${encodeURIComponent("Service Payment")}`;
+                    const qrImageURL = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+                    const qrImgEl = document.getElementById("upiQR");
+                    if (qrImgEl) qrImgEl.src = qrImageURL;
+                  } else {
+                    generateUPIQR(); // revert to default
+                  }
+                });
+              }
+            }, 0);
+            break;
+
+          case "card":
+            paymentDetails.innerHTML = `
+              <label class="block mb-2 text-sm font-medium text-gray-700">Card Number</label>
+              <input type="text" placeholder="xxxx xxxx xxxx xxxx" class="w-full mb-3 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <div class="flex gap-3">
+                <input type="text" placeholder="MM/YY" class="w-1/2 px-4 py-2 border rounded-lg" />
+                <input type="password" placeholder="CVV" class="w-1/2 px-4 py-2 border rounded-lg" />
+              </div>
+              <p class="text-sm text-gray-500 mt-3">Note: Card payments are placeholders in this demo.</p>
+            `;
+            break;
+
+          case "netbanking":
+            paymentDetails.innerHTML = `
+              <label class="block mb-2 text-sm font-medium text-gray-700">Select Bank</label>
+              <select class="w-full px-4 py-2 border rounded-lg">
+                <option>SBI</option>
+                <option>HDFC Bank</option>
+                <option>ICICI Bank</option>
+                <option>Axis Bank</option>
+                <option>Kotak Mahindra</option>
+              </select>
+              <p class="text-sm text-gray-500 mt-3">Netbanking flow is a placeholder in this demo.</p>
+            `;
+            break;
+
+          case "qrcode":
+            paymentDetails.innerHTML = `
+              <p class="mb-2 text-sm text-gray-700">Scan this QR to pay</p>
+              <img id="upiQR" src="" alt="QR Code" style="width: 180px; height: 180px;" class="mx-auto rounded-lg shadow" />
+            `;
+            generateUPIQR();
+            break;
+
+          case "cash":
+            paymentDetails.innerHTML = `
+              <p class="text-sm text-gray-700">You have selected <strong>Pay After Service</strong>. Please keep cash or UPI ready during service.</p>
+            `;
+            break;
+        }
+      });
+    });
+
+    // Confirm button
+    confirmBtn.addEventListener("click", () => {
+      alert("Payment Confirmed or Chosen! Redirecting...");
+      window.location.href = "confirmation.php";
+    });
+
+    // On load: hide/prepare; but compute summary so totals are ready
+    document.addEventListener("DOMContentLoaded", () => {
+      // Pre-calc summary (in case user wants to see right away uncomment next line)
+      // updatePaymentSummary();
+    });
+  </script>
+</body>
+</html>

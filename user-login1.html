@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SpitiCare - Auth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #FF6B35;
+      --primary-dark: #E55A2B;
+      --secondary-color: #F7931E;
+      --text-color: #f5f5f5;
+      --error-color: #e74c3c;
+      --success-color: #2ecc71;
+      --light-gray: rgba(245, 245, 245, 0.1);
+      --border-color: rgba(255, 107, 53, 0.3);
+      --black: #000000;
+      --dark-gray: #222222;
+    }
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+    body {
+      background: linear-gradient(135deg, #000000 0%, #FF6B35 100%);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 107, 53, 0.2) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 107, 53, 0.2) 0%, transparent 20%),
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.5) 0%, transparent 50%);
+      z-index: 0;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(15px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      width: 360px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 107, 53, 0.3);
+      position: relative;
+      z-index: 1;
+      transform: translateY(0);
+      animation: fadeInUp 0.6s ease-out;
+      border: 1px solid var(--border-color);
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo i {
+      font-size: 60px;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      text-shadow: 0 0 15px rgba(255, 107, 53, 0.7);
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    h2 {
+      color: var(--text-color);
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 28px;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary-color);
+      z-index: 2;
+    }
+    input {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 14px;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      outline: none;
+    }
+    input::placeholder {
+      color: rgba(245, 245, 245, 0.6);
+    }
+    input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2), 0 0 10px rgba(255, 107, 53, 0.3);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 10px;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+    }
+    button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+      z-index: -1;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+    button:hover::before {
+      opacity: 1;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 53, 0.5);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    .toggle-link {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--primary-color);
+      font-size: 14px;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .toggle-link:hover {
+      color: var(--secondary-color);
+      text-decoration: underline;
+      text-shadow: 0 0 5px rgba(255, 107, 53, 0.5);
+    }
+    .hidden { 
+      display: none; 
+    }
+    .error {
+      color: var(--error-color);
+      font-size: 13px;
+      text-align: center;
+      margin-top: 15px;
+      padding: 8px;
+      border-radius: 5px;
+      background-color: rgba(231, 76, 60, 0.1);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+      animation: shake 0.5s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    .form-container {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Floating particles */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+    
+    .particle {
+      position: absolute;
+      background: var(--primary-color);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 15s infinite linear;
+    }
+    
+    @keyframes float {
+      from {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.3;
+      }
+      90% {
+        opacity: 0.3;
+      }
+      to {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+.container {
+  background-color: #000; /* black background for contrast */
+  padding: 1rem;
+}
+.logo {
+  color: #fff;                /* white text */
+  font-size: 32px;            /* bigger and bold */
+  font-family: 'Playfair Display', serif; /* stylish font */
+  letter-spacing: 2px;        /* spacing between letters */
+  text-transform: uppercase;  /* makes it modern */
+}
+  </style>
+</head>
+<body>
+  <!-- Floating particles -->
+  <div class="particles" id="particles"></div>
+  
+  <div class="container">
+    <div class="logo">
+      SpitiCare
+    </div>
+    <h2 id="form-title">Welcome Back!</h2>
+    
+    <!-- Login Form -->
+    <div id="login-form" class="form-container">
+      <form action="auth.php" method="post" onsubmit="return validateLogin()">
+        <input type="hidden" name="action" value="login">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" name="username" id="login-username" placeholder="Username" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" id="login-password" placeholder="Password" required>
+        </div>
+        <button type="submit">Login</button>
+        <div class="error" id="login-error"></div>
+        <span class="toggle-link" onclick="showForm('signup')">Don't have an account? Sign up</span>
+        <span class="toggle-link" onclick="showForm('forgot')">Forgot Password?</span>
+      </form>
+    </div>
+    
+    <!-- Signup Form -->
+    <div id="signup-form" class="form-container hidden">
+      <form action="auth.php" method="post" onsubmit="return validateSignup()">
+        <input type="hidden" name="action" value="signup">
+        <div class="input-group">
+          <i class="fas fa-user-plus"></i>
+          <input type="text" name="username" id="signup-username" placeholder="New Username" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" name="email" id="signup-email" placeholder="Email Address" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" id="signup-password" placeholder="New Password" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+        </div>
+        <button type="submit">Sign Up</button>
+        <div class="error" id="signup-error"></div>
+        <span class="toggle-link" onclick="showForm('login')">Already have an account? Login</span>
+      </form>
+    </div>
+    
+    <!-- Forgot Password Form -->
+    <div id="forgot-form" class="form-container hidden">
+      <form action="auth.php" method="post" onsubmit="return validateForgot()">
+        <input type="hidden" name="action" value="forgot">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" name="username" id="forgot-username" placeholder="Enter your username" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" name="email" id="forgot-email" placeholder="Enter your email" required>
+        </div>
+        <button type="submit">Recover Password</button>
+        <div class="error" id="forgot-error"></div>
+        <span class="toggle-link" onclick="showForm('login')">Back to Login</span>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    // Create floating particles
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 30;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      
+      // Random size between 3px and 8px
+      const size = Math.random() * 5 + 3;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      
+      // Random position
+      particle.style.left = `${Math.random() * 100}%`;
+      
+      // Random animation delay
+      particle.style.animationDelay = `${Math.random() * 15}s`;
+      
+      // Random animation duration
+      particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+      
+      particlesContainer.appendChild(particle);
+    }
+    
+    function showForm(formType) {
+      const forms = {
+        login: document.getElementById('login-form'),
+        signup: document.getElementById('signup-form'),
+        forgot: document.getElementById('forgot-form')
+      };
+      
+      // Hide all forms with fade out effect
+      for (let key in forms) {
+        forms[key].classList.add('hidden');
+      }
+      
+      // Show selected form with fade in effect
+      setTimeout(() => {
+        forms[formType].classList.remove('hidden');
+      }, 100);
+      
+      const titleMap = { 
+        login: 'Welcome Back!', 
+        signup: 'Create Account', 
+        forgot: 'Reset Password' 
+      };
+      document.getElementById('form-title').textContent = titleMap[formType];
+      
+      // Clear error messages
+      document.getElementById('login-error').textContent = '';
+      document.getElementById('signup-error').textContent = '';
+      document.getElementById('forgot-error').textContent = '';
+    }
+    
+    function validateLogin() {
+      const username = document.getElementById("login-username").value.trim();
+      const password = document.getElementById("login-password").value.trim();
+      const error = document.getElementById("login-error");
+      
+      if (username === "" || password === "") {
+        error.textContent = "Please enter both username and password.";
+        return false;
+      }
+      
+      if (password.length < 6) {
+        error.textContent = "Password must be at least 6 characters.";
+        return false;
+      }
+      
+      return true;
+    }
+    
+    function validateSignup() {
+      const username = document.getElementById("signup-username").value.trim();
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value.trim();
+      const confirm = document.getElementById("confirm-password").value.trim();
+      const error = document.getElementById("signup-error");
+      
+      if (username === "" || email === "" || password === "" || confirm === "") {
+        error.textContent = "All fields are required.";
+        return false;
+      }
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        error.textContent = "Please enter a valid email address.";
+        return false;
+      }
+      
+      if (password.length < 6) {
+        error.textContent = "Password must be at least 6 characters.";
+        return false;
+      }
+      
+      if (password !== confirm) {
+        error.textContent = "Passwords do not match.";
+        return false;
+      }
+      
+      return true;
+    }
+    
+    function validateForgot() {
+      const username = document.getElementById("forgot-username").value.trim();
+      const email = document.getElementById("forgot-email").value.trim();
+      const error = document.getElementById("forgot-error");
+      
+      if (username === "" || email === "") {
+        error.textContent = "Please enter both username and email.";
+        return false;
+      }
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        error.textContent = "Please enter a valid email address.";
+        return false;
+      }
+      
+      return true;
+    }
+  </script>
+</body>
+</html>

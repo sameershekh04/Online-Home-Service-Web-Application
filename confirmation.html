@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Booking Confirmation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes draw-check {
+      0% {
+        stroke-dasharray: 0 24;
+        stroke-dashoffset: 24;
+      }
+      100% {
+        stroke-dasharray: 24 0;
+        stroke-dashoffset: 0;
+      }
+    }
+    .animate-draw-check .path {
+      stroke-dasharray: 24;
+      stroke-dashoffset: 24;
+      animation: draw-check 0.6s ease forwards;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- ✅ Navbar -->
+  <nav class="flex justify-between items-center px-6 py-4 bg-white shadow z-20 relative">
+    <h1 class="text-xl font-bold text-gray-800">Booking Confirmed</h1>
+    <div class="flex items-center gap-4">
+      <span id="welcomeUser" class="text-sm text-gray-700 hidden"></span>
+      <button id="logoutBtn" onclick="logoutUser()" class="bg-red-500 text-white px-4 py-2 rounded hidden hover:bg-red-600 transition">Logout</button>
+    </div>
+  </nav>
+
+  <!-- ✅ Page Content Wrapper -->
+  <div class="flex flex-col lg:flex-row relative pt-4">
+
+    <!-- ✅ Booking Details Sidebar -->
+    <aside class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 w-full lg:w-80 mx-4 mb-6 lg:mb-0 lg:fixed top-24 left-6 z-10">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m2 0a2 2 0 100-4 2 2 0 000 4zM9 12a2 2 0 100-4 2 2 0 000 4zM3 12h.01M21 12h.01M4 16a2 2 0 100-4 2 2 0 000 4zM20 16a2 2 0 100-4 2 2 0 000 4z" />
+        </svg>
+        <span>Booking Details</span>
+      </h2>
+      <div id="addressContainer" class="space-y-2 text-sm text-gray-700 leading-relaxed">
+        <!-- Filled by JS -->
+      </div>
+    </aside>
+
+    <!-- ✅ Main Content -->
+    <main class="flex-1 flex flex-col lg:ml-[22rem] p-4">
+      <!-- ✅ Success Message -->
+      <section class="bg-white rounded-2xl shadow-md p-6 text-center">
+        <div class="mb-4">
+          <div class="w-20 h-20 mx-auto bg-green-100 text-green-600 rounded-full flex items-center justify-center animate-bounce">
+            <svg class="w-10 h-10 animate-draw-check" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path class="path" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold mt-4">Payment Successful!</h2>
+          <p class="text-gray-600 mt-2">Your service has been confirmed. We'll reach out to you shortly.</p>
+        </div>
+
+        <!-- ✅ Cart Summary -->
+        <div class="text-left bg-gray-50 p-4 rounded-lg mt-6 shadow-sm text-sm text-gray-700 space-y-2">
+          <h3 class="font-semibold text-lg text-gray-800 mb-2">Cart Summary</h3>
+          <div id="cart-items" class="space-y-1"></div>
+          <hr />
+          <div class="flex justify-between">
+            <span><strong>Item Total:</strong></span>
+            <span>₹<span id="item-total">0</span></span>
+          </div>
+          <div class="flex justify-between">
+            <span><strong>Taxes (18%):</strong></span>
+            <span>₹<span id="tax">0</span></span>
+          </div>
+          <div class="flex justify-between">
+            <span><strong>Platform Charges:</strong></span>
+            <span>₹69</span>
+          </div>
+          <hr />
+          <div class="flex justify-between font-semibold text-gray-900">
+            <span>Total Amount:</span>
+            <span>₹<span id="total-amount">0</span></span>
+          </div>
+        </div>
+
+        <a href="index.html" class="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium">Back to Home</a>
+
+<!-- ✅ Send WhatsApp Button (add inside main section, Back to Home button ke upar) -->
+<div class="md:col-span-2 text-center mt-4">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold">
+          Save & Send via WhatsApp
+        </button>
+      </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ✅ JS Logic -->
+ <script>
+// ✅ Welcome user
+const user = localStorage.getItem("loggedInUser");
+if (user) {
+  document.getElementById("welcomeUser").textContent = `Welcome, ${user}`;
+  document.getElementById("welcomeUser").classList.remove("hidden");
+  document.getElementById("logoutBtn").classList.remove("hidden");
+}
+
+function logoutUser() {
+  localStorage.removeItem("loggedInUser");
+  localStorage.removeItem("bookingInfo");
+  localStorage.removeItem("cart");
+  window.location.href = "index.php";
+}
+
+// ✅ Booking & Cart Fetch
+const addressContainer = document.getElementById("addressContainer");
+const cartItemsContainer = document.getElementById("cart-items");
+
+const cart = JSON.parse(localStorage.getItem("cart")) || [];
+const bookingStored = JSON.parse(localStorage.getItem("bookingInfo") || "null");
+const now = Date.now();
+let html = "";
+let itemTotal = 0;
+
+// ✅ Selected services
+if (cart.length > 0) {
+  html += `<p><strong>Selected Service(s):</strong></p><ul style="list-style-type: disc; margin-left: 1.5rem;">`;
+  cart.forEach(item => {
+    html += `<li>${item.name} — ₹${item.price} x ${item.qty}</li>`;
+  });
+  html += `</ul><br/>`;
+}
+
+// ✅ Booking details with expiry check
+if (bookingStored && bookingStored.expiry && now < bookingStored.expiry) {
+  const booking = bookingStored.data;
+
+  html += `
+    <p><strong>Detected Location:</strong> ${booking.detectedLocation || ""}</p>
+    <p><strong>Flat / House No.:</strong> ${booking.flat || ""}</p>
+    <p><strong>Landmark:</strong> ${booking.landmark || ""}</p>
+    <p><strong>Street / Area:</strong> ${booking.street || ""}</p>
+    <p><strong>Pincode:</strong> ${booking.pincode || ""}</p>
+    <p><strong>Date:</strong> ${booking.date || ""}</p>
+    <p><strong>Time:</strong> ${booking.time || ""}</p>
+    <p><strong>Phone:</strong> ${booking.phone || ""}</p>
+    <p><strong>Email:</strong> ${booking.email || ""}</p>
+    <p><strong>Instructions:</strong> ${booking.instructions || ""}</p>
+  `;
+} else {
+  html += `<p class="text-red-500">No valid booking data found. Please fill again.</p>`;
+}
+addressContainer.innerHTML = html;
+
+// ✅ Cart Summary
+cart.forEach(item => {
+  const div = document.createElement("div");
+  div.innerHTML = `<p><strong>${item.name}</strong> - ₹${item.price} x ${item.qty}</p>`;
+  cartItemsContainer.appendChild(div);
+  itemTotal += item.price * item.qty;
+});
+
+const tax = Math.round(itemTotal * 0.18);
+document.getElementById("item-total").textContent = itemTotal;
+document.getElementById("tax").textContent = tax;
+document.getElementById("total-amount").textContent = itemTotal + tax + 69;
+
+// ✅ Save booking to DB
+function saveBookingToDB() {
+  if (!bookingStored) return;
+
+  const username = localStorage.getItem("loggedInUser") || "Guest";
+  let services = cart.map(item => `${item.name} - ₹${item.price} x ${item.qty}`).join(", ");
+  const total = itemTotal + tax + 69;
+
+  const b = bookingStored.data || {};
+
+  const data = {
+    username: username,
+    service_details: services,
+    detected_location: b.detectedLocation || "",
+    flat_no: b.flat || "",
+    landmark: b.landmark || "",
+    street: b.street || "",
+    pincode: b.pincode || "",
+    booking_date: b.date || "",
+    booking_time: b.time || "",
+    phone: b.phone || "",
+    email: b.email || "",
+    instructions: b.instructions || "",
+    total_amount: total
+  };
+
+  fetch("save_booking.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(response => {
+    if (response.status === "success") {
+      console.log("✅ Booking saved to database");
+    } else {
+      console.error("❌ Error saving booking:", response.message);
+    }
+  })
+  .catch(err => console.error("❌ Fetch error:", err));
+}
+
+// ✅ WhatsApp send function (corrected)
+function sendBookingDetails() {
+  const bookingStored = JSON.parse(localStorage.getItem("bookingInfo") || "{}");
+  const booking = bookingStored.data || {};
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  if (!booking.phone) {
+    alert("No booking phone number found in booking info.");
+    return;
+  }
+
+  let phone = booking.phone.replace(/\D/g, "");
+  if (phone.length === 10) {
+    phone = "91" + phone;
+  }
+
+  let cartText = cart.map(item => `${item.name} — ₹${item.price} x ${item.qty}`).join("\n");
+
+  let message = 
+    `Hello,\n\nYour booking is confirmed!\n\n` +
+    `📦 Services:\n${cartText}\n` +
+    `📍 Location: ${booking.detectedLocation || ""}, ${booking.street || ""}, ${booking.flat || ""}\n` +
+    `📌 Landmark: ${booking.landmark || ""}\n` +
+    `📮 Pincode: ${booking.pincode || ""}\n` +
+    `📅 Date: ${booking.date || ""}\n` +
+    `⏰ Time: ${booking.time || ""}\n` +
+    `📞 Phone: ${booking.phone || ""}\n` +
+    `📧 Email: ${booking.email || ""}\n` +
+    `📝 Instructions: ${booking.instructions || ""}\n\n` +
+    `✅ Thank you for booking with us!`;
+
+  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  console.log("Generated WhatsApp URL:", whatsappUrl);
+  window.open(whatsappUrl, "_blank");
+}
+
+// ✅ Page load pe DB save
+saveBookingToDB();
+</script>
+ 
+</body>
+
+</html>

@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services - UrbanClone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        :root {
+            --primary: #0d6efd;
+            --secondary: #6c757d;
+            --accent: #ff6b6b;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        .logo i {
+            margin-right: 10px;
+            color: var(--warning);
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        nav ul li {
+            margin-left: 25px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        nav ul li a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        /* User profile dropdown styles */
+        .user-profile {
+            position: relative;
+        }
+        .user-icon {
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 5px 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .user-icon:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            width: 200px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+        .profile-dropdown.show {
+            display: block;
+        }
+        .profile-dropdown a {
+            display: block;
+            padding: 12px 15px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .profile-dropdown a:hover {
+            background-color: var(--light);
+        }
+        .profile-dropdown .profile-header {
+            padding: 15px;
+            background-color: var(--light);
+            border-bottom: 1px solid #eee;
+        }
+        .profile-dropdown .profile-header h3 {
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        .profile-dropdown .profile-header p {
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+        .profile-dropdown .logout-btn {
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3') center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+            margin-bottom: 60px;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        .search-bar {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.1rem;
+        }
+        .search-bar button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .search-bar button:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+        .services-section {
+            padding: 60px 0;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .section-title h2 {
+            font-size: 2.8rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .section-title p {
+            color: var(--secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .service-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        .service-icon {
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            position: relative;
+        }
+        .service-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--info));
+            opacity: 0.9;
+            z-index: -1;
+        }
+        .service-content {
+            padding: 25px;
+        }
+        .service-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        .service-content p {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .service-features {
+            margin-bottom: 20px;
+        }
+        .service-features li {
+            margin-bottom: 8px;
+            list-style-type: none;
+            display: flex;
+            align-items: center;
+        }
+        .service-features li i {
+            color: var(--success);
+            margin-right: 10px;
+        }
+        .service-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .book-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .book-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+        .service-card:hover .service-icon::before {
+            opacity: 1;
+        }
+        .electrician .service-icon::before { background: linear-gradient(45deg, #f39c12, #f1c40f); }
+        .plumber .service-icon::before { background: linear-gradient(45deg, #3498db, #2980b9); }
+        .cleaner .service-icon::before { background: linear-gradient(45deg, #2ecc71, #27ae60); }
+        .painter .service-icon::before { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
+        .carpenter .service-icon::before { background: linear-gradient(45deg, #e67e22, #d35400); }
+        .ac-repair .service-icon::before { background: linear-gradient(45deg, #1abc9c, #16a085); }
+        .appliance .service-icon::before { background: linear-gradient(45deg, #34495e, #2c3e50); }
+        .beauty .service-icon::before { background: linear-gradient(45deg, #e91e63, #ad1457); }
+/* Footer Base Styles */
+.footer {
+  background-color: #1a1a2e;
+  color: #fff;
+  padding: 50px 0 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100%;
+}
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+/* Logo Section */
+.footer-brand {
+  width: 100%;
+  margin-bottom: 30px;
+  text-align: center;
+}
+.logo img {
+  max-width: 180px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+.logo img:hover {
+  transform: scale(1.05);
+}
+/* Footer Sections */
+.footer-sections {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+.footer-column {
+  width: calc(25% - 20px);
+  margin-bottom: 30px;
+}
+.footer-column h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 10px;
+  color: #fff;
+}
+.footer-column h2:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;
+  height: 3px;
+  background-color: #e94560;
+}
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-column ul li {
+  margin-bottom: 12px;
+}
+.footer-column ul li a {
+  color: #b8bec5;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease, padding-left 0.3s ease;
+  display: inline-block;
+}
+.footer-column ul li a:hover {
+  color: #e94560;
+  padding-left: 5px;
+}
+/* Social Links Section */
+.social {
+  text-align: center;
+}
+.social-icons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.social-icons a {
+  margin: 0 10px;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.social-icons a:hover {
+  transform: translateY(-5px);
+}
+.social-icons img {
+  width: 30px;
+  height: 30px;
+  filter: brightness(0) invert(1);
+  transition: filter 0.3s ease;
+}
+.social-icons a:hover img {
+  filter: brightness(0) invert(1) sepia(100%) saturate(10000%) hue-rotate(0deg);
+}
+.app-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.app-links a img {
+  max-width: 150px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+.app-links a img:hover {
+  transform: scale(1.05);
+}
+/* Footer Bottom */
+.footer-bottom {
+  max-width: 1200px;
+  margin: 30px auto 0;
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+.footer-bottom p {
+  color: #b8bec5;
+  font-size: 12px;
+  margin: 5px 0;
+  line-height: 1.5;
+}
+/* Responsive Styles */
+@media (max-width: 992px) {
+  .footer-column {
+    width: calc(50% - 20px);
+  }
+  
+  .social {
+    width: 100%;
+    margin-top: 20px;
+  }
+}
+@media (max-width: 576px) {
+  .footer-column {
+    width: 100%;
+    margin-bottom: 25px;
+  }
+  
+  .footer-brand {
+    margin-bottom: 20px;
+  }
+  
+  .footer-sections {
+    flex-direction: column;
+  }
+  
+  .social-icons {
+    margin-bottom: 15px;
+  }
+  
+  .app-links {
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .app-links a img {
+    max-width: 120px;
+  }
+}
+     
+.greeting {
+  color: #673147;             /* Regal plum */
+  font-weight: bold;
+  font-size: 1.1rem;
+  animation: fadeInSlide 0.8s ease-in-out forwards;
+  opacity: 0;
+  display: inline-block;
+}
+/* Simple fade & slide animation */
+@keyframes fadeInSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+        }
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            display: none;
+        }
+        .no-results h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        .no-results p {
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        .no-results button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .no-results button:hover {
+            background: #0b5ed7;
+            transform: scale(1.05);
+        }
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+            }
+            
+            nav ul li {
+                margin: 0 10px;
+            }
+        }
+/* General container styles */
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+/* Doorstep Service Section */
+h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 10px;
+}
+p {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.5;
+}
+/* Safety Section */
+.container h1 {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+.container .highlight {
+  color: #ff6f00;
+}
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  align-items: center;
+}
+.image img {
+  max-width: 350px;
+  width: 100%;
+  border-radius: 10px;
+}
+.text {
+  flex: 1;
+}
+.section {
+  margin-bottom: 20px;
+}
+.section h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 5px;
+}
+.section p {
+  font-size: 15px;
+  font-weight: 400;
+  color: #555;
+}
+/* Booking Steps Section */
+.booking-steps {
+  background: #f8f9fa;
+  padding: 40px 20px;
+  text-align: center;
+}
+.booking-steps h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+.step-box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+.step-box:hover {
+  transform: translateY(-5px);
+}
+.step-number {
+  background: #ff6f00;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+}
+.step-box p {
+  font-size: 16px;
+  font-weight: 600;
+}
+.step-box span {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: #777;
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .image img {
+    margin: auto;
+  }
+}
+.logo img {
+  height: 65px;
+  width: 170px;
+  object-fit: cover;
+  border-radius: 12px;       /* 👈 Slight round edges */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 👈 Soft shadow for depth */
+  border: 1px solid #e5e7eb; /* 👈 Light gray border for definition */
+  background-color: white;   /* Optional: in case image has transparency */
+  padding: 4px;              /* Optional: space inside border */
+  transition: transform 0.3s ease;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-city"></i>
+                SpitiCare
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li id="auth-container">
+                        <!-- Login link will be shown by default, replaced with user icon after login -->
+                        <a href="user-login1.html" id="login-link">Login</a>
+                        <!-- User profile dropdown (hidden by default) -->
+                        <div class="user-profile" id="user-profile" style="display: none;">
+                            <div class="user-icon" id="user-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="profile-dropdown" id="profile-dropdown">
+                                <div class="profile-header">
+                                    <h3 id="user-name">John Doe</h3>
+                                    <p id="user-email">john@example.com</p>
+                                </div>
+                                <a href="#">My Profile</a>
+                                <a href="#">My Bookings</a>
+                                <a href="#">Settings</a>
+                                <a href="#" class="logout-btn" id="logout-btn">Logout</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="container">
+            <h1>Professional Home Services</h1>
+            <p>Book trusted professionals for all your home service needs. Quality service at your doorstep.</p>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search for a service...">
+                <button id="search-button"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </section>
+    <section class="services-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Services</h2>
+                <p>We offer a wide range of home services performed by certified professionals at your convenience.</p>
+            </div>
+            <div class="services-grid" id="services-grid">
+                <!-- Electrician Service -->
+                <div class="service-card electrician">
+                    <div class="service-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Electrician</h3>
+                        <p>Expert electrical repair and installation services for your home.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check-circle"></i> Wiring & Rewiring</li>
+                            <li><i class="fas fa-check-circle"></i> Switch & Socket Repair</li>
+                            <li><i class="fas fa-check-circle"></i> Light Fixture Installation</li>
+                        </ul>
+                        <div class="service-footer">
+                            <div class="price">₹299 onwards</div>
+                            <button class="book-btn" data-service="Electrician">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Plumber Service -->
+                <div class="service-card plumber">
+                    <div class="service-icon">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Plumber</h3>
+                        <p>Reliable plumbing solutions for all your water-related needs.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check-circle"></i> Tap & Faucet Repair</li>
+                            <li><i class="fas fa-check-circle"></i> Drain Cleaning</li>
+                            <li><i class="fas fa-check-circle"></i> Water Tank Installation</li>
+                        </ul>
+                        <div class="service-footer">
+                            <div class="price">₹249 onwards</div>
+                            <button class="book-btn" data-service="Plumber">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Cleaner Service -->
+                <div class="service-card cleaner">
+                    <div class="service-icon">
+                        <i class="fas fa-broom"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Home Cleaning</h3>
+                        <p>Professional cleaning services for a spotless and hygienic home.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check-circle"></i> Deep Cleaning</li>
+                            <li><i class="fas fa-check-circle"></i> Kitchen & Bathroom Cleaning</li>
+                            <li><i class="fas fa-check-circle"></i> Post-Construction Cleaning</li>
+                        </ul>
+                        <div class="service-footer">
+                            <div class="price">₹499 onwards</div>
+                            <button class="book-btn" data-service="Home Cleaning">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Painter Service -->
+                <div class="service-card painter">
+                    <div class="service-icon">
+                        <i class="fas fa-paint-roller"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Painter</h3>
+                        <p>Transform your space with our professional painting services.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check-circle"></i> Interior Painting</li>
+                            <li><i class="fas fa-check-circle"></i> Exterior Painting</li>
+                            <li><i class="fas fa-check-circle"></i> Texture Painting</li>
+                        </ul>
+                        <div class="service-footer">
+                            <div class="price">₹15/sq.ft onwards</div>
+                            <button class="book-btn" data-service="Painter">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Carpenter Service -->
+                <div class="service-card carpenter">
+                    <div class="service-icon">
+                        <i class="fas fa-hammer"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Carpenter</h3>
+                        <p>Custom woodwork and furniture repair services.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check-circle"></i> Furniture Repair</li>
+                            <li><i class="fas fa-check-circle"></i> Custom Cabinets</li>
+                            <li><i class="fas fa-check-circle"></i> Door & Window Repair</li>
+                        </ul>
+                        <div class="service-footer">
+                            <div class="price">₹349 onwards</div>
+                            <button class="book-btn" data-service="Carpenter">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- AC Repair Service -->
+                <div class="service-card ac-repair">
+                    <div class="service-icon">
+                        <i class="fas fa-snowflake"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>AC Repair</h3>
+                        <p>Expert AC repair and maintenance services for all brands.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check-circle"></i> AC Installation</li>
+                            <li><i class="fas fa-check-circle"></i> Gas Refilling</li>
+                            <li><i class="fas fa-check-circle"></i> Annual Maintenance</li>
+                        </ul>
+                        <div class="service-footer">
+                            <div class="price">₹299 onwards</div>
+                            <button class="book-btn" data-service="AC Repair">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Appliance Repair Service -->
+                <div class="service-card appliance">
+                    <div class="service-icon">
+                        <i class="fas fa-blender"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Appliance Repair</h3>
+                        <p>Repair services for all your home appliances.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check-circle"></i> Refrigerator Repair</li>
+                            <li><i class="fas fa-check-circle"></i> Washing Machine Repair</li>
+                            <li><i class="fas fa-check-circle"></i> Microwave Repair</li>
+                        </ul>
+                        <div class="service-footer">
+                            <div class="price">₹349 onwards</div>
+                            <button class="book-btn" data-service="Appliance Repair">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Beauty Service -->
+                <div class="service-card beauty">
+                    <div class="service-icon">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Beauty & Wellness</h3>
+                        <p>Professional beauty services at your home.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check-circle"></i> Hair Styling</li>
+                            <li><i class="fas fa-check-circle"></i> Facials & Skin Care</li>
+                            <li><i class="fas fa-check-circle"></i> Massage Therapy</li>
+                        </ul>
+                        <div class="service-footer">
+                            <div class="price">₹599 onwards</div>
+                            <button class="book-btn" data-service="Beauty & Wellness">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="no-results" id="no-results">
+                <h3>No services found</h3>
+                <p>Try searching with different keywords</p>
+                <button id="reset-search">View All Services</button>
+            </div>
+        </div>
+    </section>
+<!-- Why Choose Us Section -->
+<section style="background-color: #f5f5f5; padding: 60px 0; font-family: 'Arial', sans-serif;">
+  <div style="text-align: center; margin-bottom: 40px;">
+    <h2 style="font-size: 48px; font-weight: 800; color: #111;">So, why choose us?</h2>
+  </div>
+  <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; max-width: 1200px; margin: auto;">
+    <!-- Card 1 -->
+    <div style="background-color: #fff; padding: 30px; border-radius: 25px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); width: 300px;">
+      <div style="
+        background-color: #ff6f00;
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        background-image: url('price-tag.png');
+        background-size: 50%;
+        background-position: center;
+        background-repeat: no-repeat;
+      "></div>
+      <h2 style="font-size: 24px; font-weight: 700; color: #111;">Fair prices</h2>
+      <p style="font-size: 16px; font-weight: 500; color: #333;">Choose the best offer at your price</p>
+    </div>
+    <!-- Card 2 -->
+    <div style="background-color: #fff; padding: 30px; border-radius: 25px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); width: 300px;">
+      <div style="
+        background-color: #ff6f00;
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        background-image: url('verify.png');
+        background-size: 50%;
+        background-position: center;
+        background-repeat: no-repeat;
+      "></div>
+      <h3 style="font-size: 24px; font-weight: 700; color: #111;">Verified professionals</h3>
+      <p style="font-size: 16px; font-weight: 500; color: #333;">Choose from trusted experts based on reviews and ratings</p>
+    </div>
+    <!-- Card 3 -->
+    <div style="background-color: #fff; padding: 30px; border-radius: 25px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); width: 300px;">
+      <div style="
+        background-color: #ff6f00;
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        background-image: url('delivery.png');
+        background-size: 50%;
+        background-position: center;
+        background-repeat: no-repeat;
+      "></div>
+      <h3 style="font-size: 24px; font-weight: 700; color: #111;">Doorstep service</h3>
+      <p style="font-size: 16px; font-weight: 500; color: #333;">Our professionals reach your home directly, delivering services at your preferred time and location.</p>
+    </div>
+  </div>
+</section>
+<div class="container">
+    <h1>We care about <span class="highlight">safety</span></h1>
+    <div class="content">
+      <div class="image">
+        <img src="person.png" alt="Smiling person with shield" />
+      </div>
+      <div class="text">
+        <div class="section">
+          <h2>Rating system</h2>
+          <p>We ask users to give us their honest feedback after each service. You can choose your service - providers based on the experience of previous services</p>
+        </div>
+        <div class="section">
+          <h2>Mandatory checks</h2>
+          <p>All service - providers must pass background check before working with Smart Point Hub</p>
+        </div>
+        <div class="section">
+          <h2>Safety button</h2>
+          <p>Tap it to quickly contact the police or emergency services</p>
+        </div>
+      </div>
+    </div>
+  </div>
+<section class="booking-steps">
+  <h2>How It Works</h2>
+  <div class="steps-grid">
+    <div class="step-box">
+      <div class="step-number">1</div>
+      <p>Login / Signup<br><span>Google or Phone OTP</span></p>
+    </div>
+    <div class="step-box">
+      <div class="step-number">2</div>
+      <p>Select Service<br><span>Choose category & sub-service</span></p>
+    </div>
+    <div class="step-box">
+      <div class="step-number">3</div>
+      <p>Upload Photos<br><span>Optional, for better service</span></p>
+    </div>
+    <div class="step-box">
+      <div class="step-number">4</div>
+      <p>Choose Time Slot<br><span>Pick convenient time</span></p>
+    </div>
+    <div class="step-box">
+      <div class="step-number">5</div>
+      <p>Address Details<br><span>Location + Landmark</span></p>
+    </div>
+    <div class="step-box">
+      <div class="step-number">6</div>
+      <p>Make Payment<br><span>UPI / Card / Cash</span></p>
+    </div>
+    <div class="step-box">
+      <div class="step-number">7</div>
+      <p>Booking Confirmed<br><span>Relax and track service</span></p>
+    </div>
+  </div>
+</section>
+
+    <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="logo">
+        <img src="loago.jpg" alt="SmartPoint Hub Logo" />
+      </div>
+      </div>
+      <div class="footer-sections">
+        <div class="footer-column">
+          <h2>Company</h2>
+          <ul>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Investor Relations</a></li>
+            <li><a href="#">Terms & conditions</a></li>
+            <li><a href="#">Privacy policy</a></li>
+            <li><a href="#">Anti-discrimination policy</a></li>
+            <li><a href="#">ESG Impact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h2>For customers</h2>
+          <ul>
+            <li><a href="#">UC reviews</a></li>
+            <li><a href="#">Categories near you</a></li>
+            <li><a href="#">Contact us</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h2>For professionals</h2>
+          <ul>
+            <li><a href="#">Register as a professional</a></li>
+          </ul>
+        </div>
+        <div class="footer-column social">
+          <h2>Social links</h2>
+          <div class="social-icons">
+            <a href="#"><img src="https://img.icons8.com/ios-filled/30/000000/twitter.png" alt="Twitter"/></a>
+            <a href="#"><img src="https://img.icons8.com/ios-filled/30/000000/facebook-new.png" alt="Facebook"/></a>
+            <a href="#"><img src="https://img.icons8.com/ios-filled/30/000000/instagram-new.png" alt="Instagram"/></a>
+            <a href="#"><img src="https://img.icons8.com/ios-filled/30/000000/linkedin.png" alt="LinkedIn"/></a>
+          </div>
+          <div class="app-links">
+            <a href="#"><img src="appStore.png" alt="App Store" /></a>
+            <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>* As on December 31, 2024</p>
+      <p>© Copyright 2025 SpitiCare Solution . (formerly known as SpitiCare Technologies India Limited and SpitiCare Technologies India Limited) All rights reserved. | CIN: U74140DL24PTC274413</p>
+    </div>
+  </footer>
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> Booking request for <span id="service-name"></span> received! Our team will contact you shortly.
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in (from localStorage)
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userName = localStorage.getItem('userName') || 'John Doe';
+            const userEmail = localStorage.getItem('userEmail') || 'john@example.com';
+            
+            // Update UI based on login status
+            updateAuthUI(isLoggedIn, userName, userEmail);
+            
+            // Service booking functionality
+            const bookButtons = document.querySelectorAll('.book-btn');
+            const notification = document.getElementById('notification');
+            const serviceNameElement = document.getElementById('service-name');
+            
+            bookButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const serviceName = this.getAttribute('data-service');
+                    serviceNameElement.textContent = serviceName;
+                    
+                    // Show notification
+                    notification.classList.add('show');
+                    
+                    // Hide notification after 5 seconds
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 5000);
+                });
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const serviceCards = document.querySelectorAll('.service-card');
+            const servicesGrid = document.getElementById('services-grid');
+            const noResults = document.getElementById('no-results');
+            const resetButton = document.getElementById('reset-search');
+            
+            // Function to filter services based on search term
+            function filterServices() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                let hasResults = false;
+                
+                serviceCards.forEach(card => {
+                    const serviceName = card.querySelector('h3').textContent.toLowerCase();
+                    const serviceDescription = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (serviceName.includes(searchTerm) || serviceDescription.includes(searchTerm)) {
+                        card.style.display = 'block';
+                        hasResults = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Show or hide the "no results" message
+                if (hasResults) {
+                    servicesGrid.style.display = 'grid';
+                    noResults.style.display = 'none';
+                } else {
+                    servicesGrid.style.display = 'none';
+                    noResults.style.display = 'block';
+                }
+            }
+            
+            // Add event listeners for search
+            searchInput.addEventListener('input', filterServices);
+            searchButton.addEventListener('click', filterServices);
+            
+            // Allow pressing Enter key to trigger search
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    filterServices();
+                }
+            });
+            
+            // Reset search when clicking the reset button
+            resetButton.addEventListener('click', function() {
+                searchInput.value = '';
+                filterServices();
+            });
+            
+            // User profile dropdown functionality
+            const userIcon = document.getElementById('user-icon');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            const logoutBtn = document.getElementById('logout-btn');
+            
+            // Toggle profile dropdown
+            userIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('show');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                profileDropdown.classList.remove('show');
+            });
+            
+            // Prevent dropdown from closing when clicking inside it
+            profileDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            // Logout functionality
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Clear login data from localStorage
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userEmail');
+                
+                // Update UI to show logged out state
+                updateAuthUI(false);
+                
+                // Show logout notification
+                const logoutNotification = document.createElement('div');
+                logoutNotification.className = 'notification show';
+                logoutNotification.innerHTML = '<i class="fas fa-check-circle"></i> You have been successfully logged out.';
+                document.body.appendChild(logoutNotification);
+                
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    logoutNotification.remove();
+                }, 3000);
+            });
+            
+            // Function to update authentication UI
+            function updateAuthUI(loggedIn, name = 'John Doe', email = 'john@example.com') {
+                const loginLink = document.getElementById('login-link');
+                const userProfile = document.getElementById('user-profile');
+                const userNameElement = document.getElementById('user-name');
+                const userEmailElement = document.getElementById('user-email');
+                
+                if (loggedIn) {
+                    // Hide login link and show user profile
+                    loginLink.style.display = 'none';
+                    userProfile.style.display = 'block';
+                    
+                    // Update user info
+                    userNameElement.textContent = name;
+                    userEmailElement.textContent = email;
+                } else {
+                    // Show login link and hide user profile
+                    loginLink.style.display = 'block';
+                    userProfile.style.display = 'none';
+                }
+            }
+            
+            // Check if redirected from login page with success parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const loginSuccess = urlParams.get('login');
+            
+            if (loginSuccess === 'success') {
+                // Set login status in localStorage
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                // Get user info from URL parameters or use defaults
+                const name = urlParams.get('name') || 'John Doe';
+                const email = urlParams.get('email') || 'john@example.com';
+                
+                localStorage.setItem('userName', name);
+                localStorage.setItem('userEmail', email);
+                
+                // Update UI
+                updateAuthUI(true, name, email);
+                
+                // Show login success notification
+                const loginNotification = document.createElement('div');
+                loginNotification.className = 'notification show';
+                loginNotification.innerHTML = '<i class="fas fa-check-circle"></i> Login successful! Welcome back, ' + name + '!';
+                document.body.appendChild(loginNotification);
+                
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    loginNotification.remove();
+                }, 3000);
+                
+                // Clean URL parameters
+                const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+        });
+
+document.querySelector(".electrician .book-btn").addEventListener("click", function () {
+    window.location.href = "rough.html";
+  });
+    </script>
+</body>
+</html>

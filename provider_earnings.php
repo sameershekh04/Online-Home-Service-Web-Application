@@ -1,0 +1,478 @@
+<?php
+session_start();
+// Check if provider is logged in and verified
+if (!isset($_SESSION['provider_logged_in']) || $_SESSION['provider_logged_in'] !== true) {
+    header("Location: provider_login.php");
+    exit();
+}
+// Database configuration
+$db_host = 'localhost';
+$db_user = 'root';
+$db_pass = 'Sameer@123';
+$db_name = 'services_app';
+// Create database connection
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+// Get provider details
+$provider_id = $_SESSION['provider_id'];
+$stmt = $conn->prepare("SELECT * FROM service_providers WHERE id = ?");
+$stmt->bind_param("i", $provider_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$provider = $result->fetch_assoc();
+// Check if provider is still verified
+if ($provider['status'] != 'verified') {
+    session_unset();
+    session_destroy();
+    header("Location: provider_login.php");
+    exit();
+}
+
+// Get provider earnings
+$earnings_stmt = $conn->prepare("
+    SELECT b.*, u.fullName as customerName, s.title as serviceTitle 
+    FROM bookings b 
+    JOIN users u ON b.user_id = u.id 
+    JOIN services s ON b.service_id = s.id 
+    WHERE b.provider_id = ? AND b.status = 'completed' 
+    ORDER BY b.booking_date DESC
+");
+$earnings_stmt->bind_param("i", $provider_id);
+$earnings_stmt->execute();
+$earnings_result = $earnings_stmt->get_result();
+$earnings = [];
+
+$total_earnings = 0;
+$current_month_earnings = 0;
+$current_month = date('Y-m');
+
+while ($row = $earnings_result->fetch_assoc()) {
+    $earnings[] = $row;
+    $total_earnings += $row['amount'];
+    
+    $booking_month = date('Y-m', strtotime($row['booking_date']));
+    if ($booking_month == $current_month) {
+        $current_month_earnings += $row['amount'];
+    }
+}
+
+$earnings_stmt->close();
+$stmt->close();
+$conn->close();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnings - SpitiCare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5d3b66;
+            --primary-light: #8e44ad;
+            --secondary: #ff6b6b;
+            --accent: #ff9f43;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --success: #10ac84;
+            --warning: #ee5a24;
+            --info: #0abde3;
+            --text: #333;
+            --text-light: #666;
+            --bg-light: #ffffff;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .sidebar-menu {
+            list-style: none;
+        }
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar-menu i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 20px;
+        }
+        .header {
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+        .provider-info {
+            display: flex;
+            align-items: center;
+        }
+        .provider-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .provider-name {
+            font-weight: 500;
+        }
+        .logout-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .logout-btn:hover {
+            background-color: #e55039;
+        }
+        /* Content */
+        .content-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .section-header h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        .earnings-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+        .summary-card h3 {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .summary-card .amount {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .summary-card .icon {
+            float: right;
+            font-size: 2rem;
+            color: var(--primary-light);
+            opacity: 0.5;
+        }
+        .earnings-list {
+            margin-top: 20px;
+        }
+        .earning-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--success);
+            transition: var(--transition);
+        }
+        .earning-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        .earning-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .earning-service {
+            font-weight: 600;
+            color: var(--text);
+        }
+        .earning-amount {
+            font-weight: 600;
+            color: var(--success);
+        }
+        .earning-details {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--primary-light);
+            margin-bottom: 15px;
+        }
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4a2d53;
+        }
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1000;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .earnings-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 576px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .provider-info {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            .earning-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .earning-amount {
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-home"></i> SpitiCare</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="provider_dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="provider_profile.php"><i class="fas fa-user"></i> My Profile</a></li>
+                <li><a href="provider_services.php"><i class="fas fa-concierge-bell"></i> My Services</a></li>
+                <li><a href="provider_bookings.php"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a href="provider_reviews.php"><i class="fas fa-star"></i> Reviews</a></li>
+                <li><a href="provider_earnings.php" class="active"><i class="fas fa-money-bill-wave"></i> Earnings</a></li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <div style="display: flex; align-items: center;">
+                    <button class="mobile-menu-btn" id="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Earnings</h1>
+                </div>
+                <div class="provider-info">
+                    <img src="https://picsum.photos/seed/<?php echo $provider['id']; ?>/40/40.jpg" alt="<?php echo $provider['fullName']; ?>">
+                    <span class="provider-name"><?php echo $provider['fullName']; ?></span>
+                    <a href="provider_logout.php" class="logout-btn">Logout</a>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <div class="section-header">
+                    <h2>Earnings Summary</h2>
+                </div>
+                
+                <div class="earnings-summary">
+                    <div class="summary-card">
+                        <i class="fas fa-wallet icon"></i>
+                        <h3>Total Earnings</h3>
+                        <div class="amount">₹<?php echo number_format($total_earnings, 2); ?></div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <i class="fas fa-calendar-alt icon"></i>
+                        <h3>This Month</h3>
+                        <div class="amount">₹<?php echo number_format($current_month_earnings, 2); ?></div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <i class="fas fa-tasks icon"></i>
+                        <h3>Completed Services</h3>
+                        <div class="amount"><?php echo count($earnings); ?></div>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <h2>Earnings History</h2>
+                </div>
+                
+                <?php if (count($earnings) > 0): ?>
+                    <div class="earnings-list">
+                        <?php foreach ($earnings as $earning): ?>
+                            <div class="earning-item">
+                                <div class="earning-header">
+                                    <div class="earning-service"><?php echo $earning['serviceTitle']; ?></div>
+                                    <div class="earning-amount">₹<?php echo number_format($earning['amount'], 2); ?></div>
+                                </div>
+                                <div class="earning-details">
+                                    <div>Customer: <?php echo $earning['customerName']; ?></div>
+                                    <div>Date: <?php echo date('M d, Y', strtotime($earning['booking_date'])); ?></div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="empty-state">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h3>No Earnings Yet</h3>
+                        <p>You haven't completed any services yet. Complete services to start earning!</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

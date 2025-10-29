@@ -1,0 +1,851 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart - SpitiCare</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #000000;
+      --secondary-color: #333333;
+      --accent-color: #FF6600;
+      --accent-2: #FF9933;
+      --text-color: #333333;
+      --text-light: #666666;
+      --light-gray: #f8f9fa;
+      --medium-gray: #e2e8f0;
+      --dark-gray: #4a5568;
+      --white: #ffffff;
+      --gradient-1: linear-gradient(135deg, #000000 0%, #333333 100%);
+      --gradient-2: linear-gradient(135deg, #FF6600 0%, #FF9933 100%);
+      --gradient-3: linear-gradient(135deg, #FF6600 0%, #FF9933 100%);
+      --gradient-4: linear-gradient(135deg, #333333 0%, #000000 100%);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+      --transition: all 0.3s ease;
+    }
+    
+    body { 
+      background-color: #f5f5f5; 
+      font-family: 'Poppins', sans-serif;
+      color: var(--text-color);
+      overflow-x: hidden;
+    }
+    
+    .cart-item p { 
+      font-size: 14px; 
+      color: var(--text-color);
+      transition: var(--transition);
+    }
+    
+    .login-box {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--gradient-2);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+    
+    .login-box:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .login-box:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .logo i {
+      margin-right: 10px;
+      color: var(--accent-color);
+      font-size: 2.2rem;
+    }
+    
+    /* Navbar styling */
+    nav {
+      background: var(--white);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+    
+    /* Button styling */
+    .btn-primary {
+      background: var(--gradient-1);
+      color: var(--white);
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    }
+    
+    .btn-danger {
+      background: var(--gradient-2);
+      color: var(--white);
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(255, 102, 0, 0.4);
+    }
+    
+    .btn-success {
+      background: var(--gradient-2);
+      color: var(--white);
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
+    }
+    
+    .btn-success:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(255, 102, 0, 0.4);
+    }
+    
+    /* Card styling */
+    .card {
+      background: var(--white);
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .card-header {
+      background: var(--gradient-1);
+      color: var(--white);
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+    }
+    
+    /* Cart item styling */
+    .cart-item {
+      padding: 1rem;
+      border-radius: 0.75rem;
+      background: var(--light-gray);
+      transition: var(--transition);
+      border-left: 4px solid transparent;
+    }
+    
+    .cart-item:hover {
+      background: #f0f0f0;
+      border-left-color: var(--accent-color);
+      transform: translateX(5px);
+    }
+    
+    /* Booking details styling */
+    .booking-detail {
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      background: var(--light-gray);
+      margin-bottom: 0.5rem;
+      transition: var(--transition);
+    }
+    
+    .booking-detail:hover {
+      background: #f0f0f0;
+      transform: translateX(5px);
+    }
+    
+    /* Animated background */
+    .bg-animation {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      opacity: 0.05;
+    }
+    
+    .bg-animation span {
+      position: absolute;
+      display: block;
+      list-style: none;
+      width: 20px;
+      height: 20px;
+      background: var(--primary-color);
+      animation: animate 25s linear infinite;
+      bottom: -150px;
+      border-radius: 50%;
+    }
+    
+    .bg-animation span:nth-child(1) {
+      left: 25%;
+      width: 80px;
+      height: 80px;
+      animation-delay: 0s;
+      background: var(--gradient-1);
+    }
+    
+    .bg-animation span:nth-child(2) {
+      left: 10%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 2s;
+      animation-duration: 12s;
+      background: var(--gradient-2);
+    }
+    
+    .bg-animation span:nth-child(3) {
+      left: 70%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 4s;
+      background: var(--gradient-3);
+    }
+    
+    .bg-animation span:nth-child(4) {
+      left: 40%;
+      width: 60px;
+      height: 60px;
+      animation-delay: 0s;
+      animation-duration: 18s;
+      background: var(--gradient-4);
+    }
+    
+    @keyframes animate {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+    
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .flex-col-lg {
+        flex-direction: column;
+      }
+      
+      .w-full-lg {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .login-box {
+        padding: 1.5rem;
+      }
+      
+      .card {
+        border-radius: 1rem;
+      }
+      
+      nav {
+        padding: 0.75rem 1rem;
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+      }
+      
+      .logo i {
+        font-size: 1.8rem;
+      }
+      
+      h1 {
+        font-size: 1.2rem !important;
+      }
+      
+      .card-header {
+        padding: 0.75rem 1rem;
+      }
+      
+      .card-header h2, .card-header h3 {
+        font-size: 1.1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      
+      .px-20 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      
+      .login-box {
+        padding: 1.25rem;
+      }
+      
+      .btn-primary, .btn-danger, .btn-success {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .text-xl {
+        font-size: 1.1rem;
+      }
+      
+      .text-lg {
+        font-size: 1rem;
+      }
+    }
+
+/* Navbar Base */
+#navbar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Profile Icon */
+.user-profile {
+  position: relative;
+  cursor: pointer;
+}
+
+.profile-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+  color: #ff6600; /* orange */
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.profile-icon:hover {
+  transform: scale(1.1);
+  color: #222; /* dark shade */
+}
+
+/* Small red notification dot */
+.notification-dot {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 10px;
+  height: 10px;
+  background: #ff4444;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+/* Dropdown Styling */
+.profile-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: #fff;
+  width: 220px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+/* Show dropdown when parent has .show */
+.user-profile.show .profile-dropdown {
+  display: flex;
+}
+
+/* Dropdown Header */
+.profile-header {
+  background: linear-gradient(135deg, #ff6600, #222);
+  color: #fff;
+  padding: 12px;
+  text-align: center;
+}
+
+.profile-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.profile-header p {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+/* Dropdown Links */
+.profile-dropdown a {
+  padding: 12px 15px;
+  font-size: 0.9rem;
+  color: #333;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.profile-dropdown a:hover {
+  background: #ffe6d5; /* light orange */
+  color: #ff6600;
+}
+
+/* Logout Button Special */
+.logout-btn {
+  border-top: 1px solid #eee;
+  font-weight: bold;
+  color: #ff4444 !important;
+}
+
+/* Login Button */
+#login-link a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #ff6600, #222);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#login-link a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between px-4 md:px-6 py-4 shadow relative z-10">
+    <!-- Left: Logo -->
+    <div class="logo">
+           SpitiCare
+    </div>
+    
+      
+    <!-- Right: User info -->
+   <!-- Right: User info -->
+<div class="flex items-center gap-2 md:gap-4">
+ <ul id="navbar">
+<?php if (isset($_SESSION['username'])): ?>
+    <li class="user-profile" id="user-profile">
+        <div class="profile-icon" id="profile-icon">
+            <i class="fas fa-user-circle"></i>
+            <span class="notification-dot"></span>
+        </div>
+
+        <div class="profile-dropdown" id="profile-dropdown">
+            <div class="profile-header">
+                <h3><?= htmlspecialchars($_SESSION['username']) ?></h3>
+                <p><?= htmlspecialchars($_SESSION['email'] ?? 'user@example.com') ?></p>
+            </div>
+ <a href="index.php"><i class="fas fa-home"></i> Home</a>
+<a href="services.php"><i class="fas fa-tools"></i> Services</a>
+
+            <a href="profile.php"><i class="fas fa-user"></i> My Profile</a>
+            <a href="about.html"><i class="fas fa-address-card"></i> About Us</a>
+            <a href="#" class="logout-btn" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </li>
+<?php else: ?>
+    <li id="login-link">
+        <a href="user-login1.php"><i class="fas fa-sign-in-alt"></i> Login</a>
+    </li>
+<?php endif; ?>
+</ul>
+</div>
+  </nav>
+  
+  <!-- Page Content -->
+  <div class="flex flex-col lg:flex-row pt-6 md:pt-8 px-4 lg:px-20 gap-6 md:gap-8 max-w-7xl mx-auto">
+    <!-- Booking Details Sidebar -->
+    <aside class="card w-full lg:w-1/3 border border-gray-200">
+      <div class="card-header flex items-center gap-2">
+        <i class="fas fa-clipboard-list"></i>
+        <h2 class="text-xl font-semibold">Booking Details</h2>
+      </div>
+      <div class="p-4 md:p-6">
+        <div id="addressContainer" class="text-sm space-y-2 text-gray-700"></div>
+      </div>
+    </aside>
+    
+    <!-- Cart & Login Main Section -->
+    <main class="w-full lg:w-2/3 space-y-6">
+      <?php if (!isset($_SESSION['username'])): ?>
+      <div id="loginPrompt" class="login-box max-w-md mx-auto text-center">
+        <div class="mb-4 text-5xl text-orange-500">
+          <i class="fas fa-lock"></i>
+        </div>
+        <h2 class="text-2xl font-bold mb-2 text-gray-800">Please log in to continue</h2>
+        <p class="text-gray-600 mb-6">You need to login before proceeding to payment</p>
+        <a href="user-login1.php" class="btn-primary px-6 md:px-8 py-3 rounded-lg inline-flex items-center gap-2">
+          <i class="fas fa-sign-in-alt"></i>
+          Login Now
+        </a>
+      </div>
+      <?php endif; ?>
+      
+      <!-- Cart Panel -->
+      <section class="card">
+        <div class="card-header flex items-center gap-2">
+          <i class="fas fa-shopping-cart"></i>
+          <h3 class="text-xl font-semibold">Your Cart</h3>
+        </div>
+        <div class="p-4 md:p-6">
+          <div id="cart-items" class="space-y-3"></div>
+          
+          <div class="mt-6 space-y-3 text-sm text-gray-700">
+            <hr class="border-gray-300"/>
+            <div class="flex justify-between items-center">
+              <span class="font-medium">Item Total:</span>
+              <span class="font-semibold">₹<span id="item-total">0</span></span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-medium">Taxes (18%):</span>
+              <span class="font-semibold">₹<span id="tax">0</span></span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-medium">Platform Charges:</span>
+              <span class="font-semibold">₹69</span>
+            </div>
+            <hr class="border-gray-300"/>
+            <div class="flex justify-between items-center text-lg font-bold text-gray-900">
+              <span>Total Amount:</span>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-black to-orange-500">₹<span id="total-amount">0</span></span>
+            </div>
+          </div>
+          
+          <button id="proceedToPayment" class="btn-success mt-8 w-full py-3 rounded-lg flex items-center justify-center gap-2">
+  <i class="fas fa-arrow-right"></i>
+  Proceed to Payment
+</button>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <script>
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartItemsContainer = document.getElementById("cart-items");
+    let itemTotal = 0;
+    
+    // Render cart items
+    if (cart.length === 0) {
+      cartItemsContainer.innerHTML = `
+        <div class="text-center py-8 text-gray-500">
+          <i class="fas fa-shopping-cart text-4xl mb-3"></i>
+          <p class="text-lg">Your cart is empty</p>
+        </div>
+      `;
+    } else {
+      cart.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="font-semibold text-gray-800">${item.name}</p>
+              <p class="text-sm text-gray-600">₹${item.price} x ${item.qty}</p>
+            </div>
+            <div class="text-lg font-bold text-orange-600">₹${item.price * item.qty}</div>
+          </div>
+        `;
+        cartItemsContainer.appendChild(div);
+        itemTotal += item.price * item.qty;
+      });
+    }
+    
+    document.getElementById("item-total").textContent = itemTotal;
+    const tax = Math.round(itemTotal * 0.18);
+    document.getElementById("tax").textContent = tax;
+    document.getElementById("total-amount").textContent = itemTotal + tax + 69;
+    
+    // Booking info rendering
+    const container = document.getElementById("addressContainer");
+    const bookingStored = JSON.parse(localStorage.getItem("bookingInfo"));
+    const now = Date.now();
+    
+    if (container && bookingStored && bookingStored.expiry && now < bookingStored.expiry) {
+      const booking = bookingStored.data;
+      const formattedDate = new Date(booking._timestamp).toLocaleString();
+      let html = "";
+      
+      if (cart.length > 0) {
+        html += `
+          <div class="mb-4">
+            <h3 class="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+              <i class="fas fa-list-ul text-orange-600"></i>
+              Selected Service(s)
+            </h3>
+            <ul class="list-disc pl-5 space-y-1">
+        `;
+        cart.forEach((item) => {
+          html += `<li class="text-gray-700">${item.name} — ₹${item.price} x ${item.qty}</li>`;
+        });
+        html += `</ul></div>`;
+      }
+      
+      html += `
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-map-marker-alt text-orange-600"></i>
+            Location:
+          </span>
+          <span>${booking.detectedLocation || "Not provided"}</span>
+        </div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-home text-orange-600"></i>
+            Flat No.:
+          </span>
+          <span>${booking.flat || "Not provided"}</span>
+        </div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-landmark text-orange-600"></i>
+            Landmark:
+          </span>
+          <span>${booking.landmark || "Not provided"}</span>
+        </div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-road text-orange-600"></i>
+            Street:
+          </span>
+          <span>${booking.street || "Not provided"}</span>
+        </div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-mail-bulk text-orange-600"></i>
+            Pincode:
+          </span>
+          <span>${booking.pincode || "Not provided"}</span>
+        </div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-calendar-alt text-orange-600"></i>
+            Date:
+          </span>
+          <span>${booking.date || "Not provided"}</span>
+        </div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-clock text-orange-600"></i>
+            Time:
+          </span>
+          <span>${booking.time || "Not provided"}</span>
+        </div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-phone text-orange-600"></i>
+            Phone:
+          </span>
+          <span>${booking.phone || "Not provided"}</span>
+        </div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-envelope text-orange-600"></i>
+            Email:
+          </span>
+          <span>${booking.email || "Not provided"}</span>
+        </div>
+<div class="booking-detail">
+  <span class="font-medium text-gray-800 flex items-center gap-2">
+    <i class="fas fa-tools text-orange-600"></i>
+    Service Type:
+  </span>
+  <span>${booking.serviceType || "Not specified"}</span>
+</div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-comment-alt text-orange-600"></i>
+            Instructions:
+          </span>
+          <span>${booking.instructions || "Not provided"}</span>
+        </div>
+        <div class="booking-detail">
+          <span class="font-medium text-gray-800 flex items-center gap-2">
+            <i class="fas fa-history text-orange-600"></i>
+            Submitted At:
+          </span>
+          <span>${formattedDate}</span>
+        </div>
+      `;
+      container.innerHTML = html;
+    } else {
+      container.innerHTML = `
+        <div class="text-center py-4 text-orange-500">
+          <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+          <p>No valid booking details found. Please fill them again.</p>
+        </div>
+      `;
+    }
+    
+    // Proceed to payment logic
+  // Proceed to payment logic
+document.getElementById("proceedToPayment").addEventListener("click", () => {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  if (cart.length === 0) {
+    alert("🛒 Your cart is empty!");
+    return;
+  }
+
+  // Booking details check
+  const bookingStored = JSON.parse(localStorage.getItem("bookingInfo"));
+  const now = Date.now();
+
+  if (!bookingStored || !bookingStored.expiry || now > bookingStored.expiry) {
+    // Agar booking details missing/expire hai to details.php bhejo
+    window.location.href = "details.php";
+    return;
+  }
+
+  // Agar details available hai tabhi amount calculate hoga
+  let itemTotal = 0;
+  cart.forEach(item => {
+    itemTotal += (Number(item.price) || 0) * (Number(item.qty) || 1);
+  });
+
+  const tax = Math.round(itemTotal * 0.18);
+  const finalTotal = itemTotal + tax + 69;
+
+  // Final amount session me bhejna
+  fetch("set_amount.php", {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: "total=" + finalTotal
+  })
+  .then(res => res.text())
+  .then(data => {
+    if (data.trim() === "ok") {
+      window.location.href = "payment.php";
+    } else {
+      alert("❌ Failed to set amount: " + data);
+    }
+  });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logout-btn");
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+
+      fetch("logout.php")
+        .then(response => response.text())
+        .then(data => {
+          if (data.trim() === "success") {
+            // Profile hatado
+            const userProfile = document.getElementById("user-profile");
+            if (userProfile) userProfile.remove();
+
+            // Login button banao
+            const loginLi = document.createElement("li");
+            loginLi.id = "login-link";
+            loginLi.innerHTML = `
+              <a href="user-login1.php">
+                <i class="fas fa-sign-in-alt"></i> Login
+              </a>
+            `;
+
+            // Navbar me insert karo
+            document.getElementById("navbar").appendChild(loginLi);
+          }
+        });
+    });
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const profileIcon = document.getElementById("profile-icon");
+  const userProfile = document.querySelector(".user-profile");
+
+  if (profileIcon && userProfile) {
+    // Icon par click -> dropdown toggle
+    profileIcon.addEventListener("click", (e) => {
+      e.stopPropagation(); // event bubble stop
+      userProfile.classList.toggle("show");
+    });
+
+    // Agar bahar click hua to dropdown band ho
+    document.addEventListener("click", () => {
+      userProfile.classList.remove("show");
+    });
+  }
+});
+
+  </script>
+</body>
+</html>
